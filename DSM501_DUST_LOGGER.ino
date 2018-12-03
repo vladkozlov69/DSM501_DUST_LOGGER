@@ -81,10 +81,6 @@ void setup()
   if (sdReady)
   {
     SD.mkdir("/DSM501");
-    DateTime now = rtc.now();
-    sprintf(filePath, "/DSM501/%04d%02d%02d.csv", now.year(), now.month(), now.day());
-    logFile = SD.open(filePath, FILE_WRITE);
-    logFile.close();
   }
 
   lcd.setCursor(0,0);
@@ -142,7 +138,7 @@ void loop()
     if (sdReady)
     {
       DateTime now = rtc.now();
-
+      sprintf(filePath, "/DSM501/%04d%02d%02d.csv", now.year(), now.month(), now.day());
       logFile = SD.open(filePath, FILE_WRITE);
 
       if (logFile)
