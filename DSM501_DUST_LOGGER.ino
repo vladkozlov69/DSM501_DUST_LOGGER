@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <SD.h>
+#include "Biquad.h"
 
 #define SD_CS 4
 
@@ -30,6 +31,9 @@ volatile unsigned long pm25_start = -1;
 volatile unsigned long pm25_data;
 volatile bool pm25_ready = false;
 unsigned long pm25_lowPulseOccupance = 0;
+
+Biquad lpFilter10(bq_type_lowpass, 0.2, 0.707, 0);
+Biquad lpFilter25(bq_type_lowpass, 0.2, 0.707, 0);
 
 void change10()
 {
@@ -86,6 +90,8 @@ void setup()
   lcd.setCursor(0,0);
   lcd.print(sdReady ? "SD OK" : "NO SD");
 
+  attachInterrupt(digitalPinToInterrupt(DUST_SENSOR_DIGITAL_PIN_PM10), change10, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(DUST_SENSOR_DIGITAL_PIN_PM25), change25, CHANGE);
 
   // wait 60s for DSM501 to warm up
   for (int i = 1; i <= 6; i++)
@@ -103,27 +109,28 @@ void setup()
   Serial.print("Ready!");
   Serial.println(sdReady ? "SD OK" : "NO SD");
 
-  attachInterrupt(digitalPinToInterrupt(DUST_SENSOR_DIGITAL_PIN_PM10), change10, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(DUST_SENSOR_DIGITAL_PIN_PM25), change25, CHANGE);
-
+  pm10_data = 0;
+  pm10_ready = false;
+  pm25_data = 0;
+  pm25_ready = false;
 }
 
 void loop()
 {
   if (pm10_ready)
   {
+	  // todo ignore noise data
     pm10_lowPulseOccupance = pm10_lowPulseOccupance + pm10_data;
     pm10_data = 0;
     pm10_ready = false;
-    //Serial.print("pm10_low"); Serial.println(pm10_lowPulseOccupance);
   }
 
   if (pm25_ready)
   {
+	  // todo ignore noise data
     pm25_lowPulseOccupance = pm25_lowPulseOccupance + pm25_data;
     pm25_data = 0;
     pm25_ready = false;
-    //Serial.print("pm25_low"); Serial.println(pm25_lowPulseOccupance);
   }
 
   if (millis() - sdLoggingInterval > sampletime_ms)
@@ -135,7 +142,7 @@ void loop()
     lcd.setCursor(0,1);
     lcd.print("R10/25:"); lcd.print(ratio10, 2); lcd.print("/"); lcd.print(ratio25, 2); lcd.print("     ");
 
-    if (sdReady)
+    if (sdReady && (ratio10 < 90.0) && (ratio25 < 90.0))
     {
       DateTime now = rtc.now();
       sprintf(filePath, "/DSM501/%04d%02d%02d.csv", now.year(), now.month(), now.day());
@@ -151,10 +158,16 @@ void loop()
         logFile.print(dataBuf);
         logFile.print(",");
 
-        logFile.print(ratio10, 2);
+        logFile.print(ratio10, 3);
         logFile.print(",");
 
-        logFile.println(ratio25, 2);
+        logFile.print(ratio25, 3);
+        logFile.print(",");
+
+        logFile.print(lpFilter10.process(ratio10), 3);
+        logFile.print(",");
+
+        logFile.println(lpFilter25.process(ratio25), 3);
         logFile.close();
 
         lcd.setCursor(10, 0);
