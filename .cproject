@@ -26,7 +26,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/SD/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/SPI/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/Biquad}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.cpp.sketch.input.1176286231" name="CPP source files" superClass="io.sloeber.compiler.cpp.sketch.input"/>
 							</tool>
@@ -39,7 +38,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/SD/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/SPI/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/Biquad}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.c.sketch.input.1829604493" name="C Source Files" superClass="io.sloeber.compiler.c.sketch.input"/>
 							</tool>
@@ -52,7 +50,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/SD/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/SPI/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSM501_DUST_LOGGER/libraries/Biquad}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.S.sketch.input.501031943" name="Assembly source files" superClass="io.sloeber.compiler.S.sketch.input"/>
 							</tool>
@@ -78,4 +75,5 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="refreshScope"/>
 </cproject>

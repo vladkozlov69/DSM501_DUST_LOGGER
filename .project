@@ -42,11 +42,6 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.6.21/variants/eightanaloginputs</locationURI>
 		</link>
 		<link>
-			<name>libraries/Biquad</name>
-			<type>2</type>
-			<location>/Users/vkozlov/Documents/Arduino/libraries/Biquad</location>
-		</link>
-		<link>
 			<name>libraries/LiquidCrystal_I2C</name>
 			<type>2</type>
 			<location>/Users/vkozlov/Documents/Arduino/libraries/LiquidCrystal_I2C</location>
