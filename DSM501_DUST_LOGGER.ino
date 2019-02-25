@@ -2,8 +2,10 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <SD.h>
+#include "MovingAverage.h"
 
 #define SD_CS 4
+
 
 RTC_DS3231 rtc;
 LiquidCrystal_I2C lcd(0x27,16,2);
@@ -12,8 +14,11 @@ LiquidCrystal_I2C lcd(0x27,16,2);
 File logFile;
 
 char filePath[25];
-char dataBuf[12];
+char dataBuf[20];
 bool sdReady = false;
+
+MovingAverage ma10(5);
+MovingAverage ma25(5);
 
 // begin DSM501 sensor
 #define DUST_SENSOR_DIGITAL_PIN_PM10  3        // DSM501 Pin 2
@@ -142,7 +147,7 @@ void loop()
 
     lcd.setCursor(0,1);
     lcd.print("R10/25:");
-    lcd.print(ratio10, 2); lcd.print("/"); lcd.print(ratio25, 2);// lcd.print("     ");
+    lcd.print(ratio10, 2); lcd.print("/"); lcd.print(ratio25, 2); lcd.print("     ");
 
     if (sdReady && (ratio10 < 90.0) && (ratio25 < 90.0))
     {
@@ -152,27 +157,27 @@ void loop()
 
       if (logFile)
       {
-    	  // dustduino -----
-          double countP1 = 1.1*pow(ratio10,3)-3.8*pow(ratio10,2)+520*ratio10+0.62;
-          double countP2 = 1.1*pow(ratio25,3)-3.8*pow(ratio25,2)+520*ratio25+0.62;
-          float PM10count = countP2;
-          float PM25count = countP1 - countP2;
-
-          // first, PM10 count to mass concentration conversion
-          double r10 = 2.6*pow(10,-6);
-          double pi = 3.14159;
-          double vol10 = (4/3)*pi*pow(r10,3);
-          double density = 1.65*pow(10,12);
-          double mass10 = density*vol10;
-          double K = 3531.5;
-          float concLarge = (PM10count)*K*mass10;
-
-          // next, PM2.5 count to mass concentration conversion
-          double r25 = 0.44*pow(10,-6);
-          double vol25 = (4/3)*pi*pow(r25,3);
-          double mass25 = density*vol25;
-          float concSmall = (PM25count)*K*mass25;
-          // dustduino -----
+//    	  // dustduino -----
+//          double countP1 = 1.1*pow(ratio10,3)-3.8*pow(ratio10,2)+520*ratio10+0.62;
+//          double countP2 = 1.1*pow(ratio25,3)-3.8*pow(ratio25,2)+520*ratio25+0.62;
+//          float PM10count = countP2;
+//          float PM25count = countP1 - countP2;
+//
+//          // first, PM10 count to mass concentration conversion
+//          double r10 = 2.6*pow(10,-6);
+//          double pi = 3.14159;
+//          double vol10 = (4/3)*pi*pow(r10,3);
+//          double density = 1.65*pow(10,12);
+//          double mass10 = density*vol10;
+//          double K = 3531.5;
+//          float concLarge = (PM10count)*K*mass10;
+//
+//          // next, PM2.5 count to mass concentration conversion
+//          double r25 = 0.44*pow(10,-6);
+//          double vol25 = (4/3)*pi*pow(r25,3);
+//          double mass25 = density*vol25;
+//          float concSmall = (PM25count)*K*mass25;
+//          // dustduino -----
 
         sprintf(dataBuf,"%04d-%02d-%02d", now.year(), now.month(), now.day());
         logFile.print(dataBuf);
@@ -182,16 +187,24 @@ void loop()
         logFile.print(dataBuf);
         logFile.print(",");
 
-        logFile.print(ratio10, 3);
+        logFile.print(ratio10, 2);
         logFile.print(",");
 
-        logFile.print(ratio25, 3);
+        logFile.print(ratio25, 2);
         logFile.print(",");
 
-        logFile.print(concLarge, 3);
+        logFile.print(ma10.process(ratio10), 2);
         logFile.print(",");
 
-        logFile.println(concSmall, 3);
+        logFile.print(ma25.process(ratio25), 2);
+        logFile.println();
+
+
+
+//        logFile.print(concLarge, 3);
+//        logFile.print(",");
+//
+//        logFile.println(concSmall, 3);
 
         logFile.close();
 
